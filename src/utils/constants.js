@@ -16,8 +16,10 @@ export const CATEGORIES = ['Все', 'Выпечка', 'Горячее', 'Сал
 export const INITIAL_DATA = {
   users: [
     { id: 1, email: 'client@test.com', pass: '123', name: 'Иван Петров', role: 'client' },
-    { id: 2, email: 'cafe@test.com', pass: '123', name: 'Кафе "Уют"', role: 'business' },
-    { id: 3, email: 'admin@test.com', pass: 'admin', name: 'Админ', role: 'admin' },
+    { id: 2, email: 'client2@test.com', pass: '123', name: 'Мария Сидорова', role: 'client' },
+    { id: 3, email: 'client3@test.com', pass: '123', name: 'Алексей Козлов', role: 'client' },
+    { id: 4, email: 'cafe@test.com', pass: '123', name: 'Кафе "Уют"', role: 'business' },
+    { id: 5, email: 'admin@test.com', pass: 'admin', name: 'Админ', role: 'admin' },
   ],
   restaurants: [
     { 

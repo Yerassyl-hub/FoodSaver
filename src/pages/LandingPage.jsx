@@ -32,9 +32,9 @@ const LandingPage = ({ onNavigate, onLogin }) => {
   };
 
   return (
-    <div className="h-screen flex bg-white overflow-hidden">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
       {/* Left Side - Description & Image */}
-      <div className="hidden lg:flex lg:w-1/2 text-white p-8 flex-col justify-center relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)' }}>
+      <div className="hidden lg:flex lg:w-1/2 text-white p-6 lg:p-8 flex-col justify-center relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)' }}>
         {/* Decorative Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-72 h-72 rounded-full mix-blend-multiply filter blur-3xl" style={{ backgroundColor: '#654321' }}></div>
@@ -87,7 +87,7 @@ const LandingPage = ({ onNavigate, onLogin }) => {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-gradient-to-br from-gray-50 to-white overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-white overflow-y-auto min-h-screen lg:min-h-0">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
@@ -100,7 +100,7 @@ const LandingPage = ({ onNavigate, onLogin }) => {
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-2xl shadow-2xl border border-gray-100">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-100">
             {/* Header */}
             <div className="text-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-1">Добро пожаловать</h2>
@@ -185,12 +185,26 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">cafe@test.com / 123</span>
                 </div>
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex justify-between items-center border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                    <span className="text-xs font-semibold text-gray-700">Клиент</span>
+                    <span className="text-xs font-semibold text-gray-700">Клиент 1</span>
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">client@test.com / 123</span>
+                </div>
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                    <span className="text-xs font-semibold text-gray-700">Клиент 2</span>
+                  </div>
+                  <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">client2@test.com / 123</span>
+                </div>
+                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                    <span className="text-xs font-semibold text-gray-700">Клиент 3</span>
+                  </div>
+                  <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">client3@test.com / 123</span>
                 </div>
               </div>
             </div>
