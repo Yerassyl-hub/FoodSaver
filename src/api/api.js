@@ -52,11 +52,11 @@ export const api = {
     return buildImageUrl(title);
   },
 
-  loadDB: () => {
+  loadDB() {
     const saved = localStorage.getItem(DB_KEY);
     if (!saved) {
       // Если нет сохраненных данных, используем INITIAL_DATA и сохраняем их
-      this.saveDB(INITIAL_DATA);
+      api.saveDB(INITIAL_DATA);
       return INITIAL_DATA;
     }
     
@@ -65,7 +65,7 @@ export const api = {
       // Проверяем, что структура данных правильная
       if (!parsed.users || !Array.isArray(parsed.users)) {
         console.warn('Invalid DB structure, resetting to INITIAL_DATA');
-        this.saveDB(INITIAL_DATA);
+        api.saveDB(INITIAL_DATA);
         return INITIAL_DATA;
       }
       
@@ -106,14 +106,14 @@ export const api = {
       });
       
       if (needsUpdate) {
-        this.saveDB(parsed);
+        api.saveDB(parsed);
         console.log('Database updated with latest user data');
       }
       
       return parsed;
     } catch (e) {
       console.error('Error parsing DB:', e);
-      this.saveDB(INITIAL_DATA);
+      api.saveDB(INITIAL_DATA);
       return INITIAL_DATA;
     }
   },
@@ -125,7 +125,7 @@ export const api = {
   async login(email, password) {
     await delay(500);
     // Принудительно синхронизируем пользователей перед попыткой входа
-    const db = this.loadDB();
+    const db = api.loadDB();
     
     // Дополнительная проверка: убеждаемся, что все пользователи из INITIAL_DATA есть в базе с правильными паролями
     let dbUpdated = false;
@@ -147,7 +147,7 @@ export const api = {
       }
     });
     if (dbUpdated) {
-      this.saveDB(db);
+      api.saveDB(db);
       console.log('Database users synchronized before login');
     }
     
@@ -204,7 +204,7 @@ export const api = {
 
   async getFoodOffers() {
     await delay(500);
-    const db = this.loadDB();
+    const db = api.loadDB();
     return db.foodOffers.map(offer => {
       const restaurant = db.restaurants.find(r => r.id === offer.restaurantId);
       // Если у поста нет координат, используем координаты ресторана
@@ -217,7 +217,7 @@ export const api = {
 
   async createFoodOffer(offerData, userId) {
     await delay(500);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const restaurant = db.restaurants.find(r => r.userId === userId);
     if (!restaurant) throw new Error('Ресторан не найден');
     
@@ -235,22 +235,22 @@ export const api = {
       address
     };
     db.foodOffers.unshift(newOffer);
-    this.saveDB(db);
+    api.saveDB(db);
   },
 
   async updateOfferStatus(offerId, newStatus) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const offer = db.foodOffers.find(f => f.id === offerId);
     if (offer) {
       offer.status = newStatus;
-      this.saveDB(db);
+      api.saveDB(db);
     }
   },
 
   async createOrder(offerId, clientId) {
     await delay(500);
-    const db = this.loadDB();
+    const db = api.loadDB();
     
     // Атомарная проверка и обновление статуса
     const offer = db.foodOffers.find(f => f.id === offerId);
@@ -285,13 +285,13 @@ export const api = {
     offer.status = 'reserved';
     offer.reservedBy = clientId; // Сохраняем, кто забронировал
     offer.reservedAt = new Date().toISOString(); // Время бронирования
-    this.saveDB(db);
+    api.saveDB(db);
     return newOrder;
   },
 
   async getOrders(userId, userRole) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     if (userRole === 'client') {
       return db.orders.filter(o => o.clientId === userId);
     } else if (userRole === 'business') {
@@ -304,42 +304,42 @@ export const api = {
 
   async confirmOrder(orderId) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const order = db.orders.find(o => o.id === orderId);
     if (order) {
       order.status = 'confirmed';
       order.confirmedAt = new Date().toISOString();
-      this.saveDB(db);
+      api.saveDB(db);
     }
   },
 
   async completeOrder(orderId) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const order = db.orders.find(o => o.id === orderId);
     if (order) {
       order.status = 'completed';
       order.completedAt = new Date().toISOString();
       const offer = db.foodOffers.find(f => f.id === order.foodOfferId);
       if (offer) offer.status = 'completed';
-      this.saveDB(db);
+      api.saveDB(db);
     }
   },
 
   async cancelOrder(orderId) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const order = db.orders.find(o => o.id === orderId);
     if (order) {
       order.status = 'cancelled';
       const offer = db.foodOffers.find(f => f.id === order.foodOfferId);
       if (offer) offer.status = 'available';
-      this.saveDB(db);
+      api.saveDB(db);
     }
   },
 
   async sendMessage(offerId, text, senderRole) {
-    const db = this.loadDB();
+    const db = api.loadDB();
     if (!db.messages[offerId]) db.messages[offerId] = [];
     
     db.messages[offerId].push({
@@ -347,16 +347,16 @@ export const api = {
       sender: senderRole,
       time: new Date().toLocaleTimeString().slice(0, 5)
     });
-    this.saveDB(db);
+    api.saveDB(db);
   },
 
   async getMessages(offerId) {
-    return this.loadDB().messages[offerId] || [];
+      return api.loadDB().messages[offerId] || [];
   },
 
   async getUserChats(userName, userRole) {
     await delay(300);
-    const db = this.loadDB();
+    const db = api.loadDB();
     const result = [];
     const currentUser = db.users.find(u => u.name === userName);
 
