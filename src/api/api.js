@@ -69,32 +69,45 @@ export const api = {
         return INITIAL_DATA;
       }
       
-      // Проверяем, есть ли все необходимые пользователи
-      const requiredUsers = INITIAL_DATA.users.map(u => u.email.toLowerCase());
-      const existingUsers = parsed.users.map(u => (u.email || '').toLowerCase());
+      // ВСЕГДА синхронизируем пользователей из INITIAL_DATA (обновляем пароли и добавляем новых)
+      let needsUpdate = false;
       
-      // Если не хватает пользователей, обновляем базу
-      const missingUsers = requiredUsers.filter(email => !existingUsers.includes(email));
-      if (missingUsers.length > 0) {
-        console.log('Adding missing users:', missingUsers);
-        // Добавляем недостающих пользователей
-        INITIAL_DATA.users.forEach(initialUser => {
-          const exists = parsed.users.find(u => 
-            (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
-          );
-          if (!exists) {
-            parsed.users.push(initialUser);
-          } else {
-            // Обновляем существующего пользователя (на случай изменения пароля)
-            const index = parsed.users.findIndex(u => 
-              (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
-            );
-            if (index !== -1) {
-              parsed.users[index] = { ...parsed.users[index], ...initialUser };
-            }
+      INITIAL_DATA.users.forEach(initialUser => {
+        const existingIndex = parsed.users.findIndex(u => 
+          (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
+        );
+        
+        if (existingIndex === -1) {
+          // Пользователя нет - добавляем
+          parsed.users.push(initialUser);
+          needsUpdate = true;
+          console.log('Added new user:', initialUser.email);
+        } else {
+          // Пользователь есть - проверяем и обновляем пароль и другие поля
+          const existing = parsed.users[existingIndex];
+          const initialPass = String(initialUser.pass || initialUser.password || '').trim();
+          const existingPass = String(existing.pass || existing.password || '').trim();
+          
+          // Обновляем если пароль отличается или другие поля изменились
+          if (initialPass !== existingPass || 
+              initialUser.name !== existing.name || 
+              initialUser.role !== existing.role) {
+            parsed.users[existingIndex] = { 
+              ...existing, 
+              pass: initialUser.pass || initialUser.password,
+              password: initialUser.pass || initialUser.password,
+              name: initialUser.name,
+              role: initialUser.role
+            };
+            needsUpdate = true;
+            console.log('Updated user:', initialUser.email, 'pass changed:', initialPass !== existingPass);
           }
-        });
+        }
+      });
+      
+      if (needsUpdate) {
         this.saveDB(parsed);
+        console.log('Database updated with latest user data');
       }
       
       return parsed;
@@ -126,7 +139,18 @@ export const api = {
       const userEmail = (u.email || '').trim().toLowerCase();
       // Проверяем оба варианта: pass и password
       const userPass = String(u.pass || u.password || '').trim();
-      const matches = userEmail === normalizedEmail && userPass === normalizedPassword;
+      const emailMatch = userEmail === normalizedEmail;
+      const passwordMatch = userPass === normalizedPassword;
+      const matches = emailMatch && passwordMatch;
+      
+      if (emailMatch && !passwordMatch) {
+        console.warn('Email found but password mismatch:', {
+          email: normalizedEmail,
+          providedPassword: normalizedPassword,
+          storedPassword: userPass,
+          userId: u.id
+        });
+      }
       
       if (matches) {
         console.log('Login success:', { email: normalizedEmail, userId: u.id, role: u.role });
