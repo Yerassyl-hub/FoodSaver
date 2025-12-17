@@ -148,25 +148,25 @@ export const Dashboard = ({ user, setPage }) => {
   const panelOffer = featuredOffer || fallbackOffer;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 sm:gap-4">
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-[0.2em] text-gray-500">All store dashboard</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Offers</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-gray-500">All store dashboard</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Offers</h1>
+          <p className="text-xs sm:text-sm text-gray-500">
             {user.role === 'business' ? 'Ваши активные предложения' : 'Лучшие скидки рядом'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2 sm:gap-3">
           {user.role === 'business' && (
             <>
-              <Button variant={activeTab === 'active' ? 'primary' : 'secondary'} onClick={() => setActiveTab('active')} className="text-xs sm:text-sm">
+              <Button variant={activeTab === 'active' ? 'primary' : 'secondary'} onClick={() => setActiveTab('active')} className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
                 Активные
               </Button>
-              <Button variant={activeTab === 'moderation' ? 'primary' : 'secondary'} onClick={() => setActiveTab('moderation')} className="text-xs sm:text-sm">
+              <Button variant={activeTab === 'moderation' ? 'primary' : 'secondary'} onClick={() => setActiveTab('moderation')} className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
                 На проверке
               </Button>
-              <Button variant={activeTab === 'history' ? 'primary' : 'secondary'} onClick={() => setActiveTab('history')} className="text-xs sm:text-sm">
+              <Button variant={activeTab === 'history' ? 'primary' : 'secondary'} onClick={() => setActiveTab('history')} className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
                 История
               </Button>
             </>
@@ -176,20 +176,20 @@ export const Dashboard = ({ user, setPage }) => {
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+          <Search className="absolute left-3 top-3 text-gray-400" size={16} />
           <input
-            className="w-full rounded-2xl border border-gray-200 bg-white/60 px-10 sm:px-12 py-2.5 sm:py-3 text-sm text-gray-700 shadow-inner"
+            className="w-full rounded-xl sm:rounded-2xl border border-gray-200 bg-white/60 pl-9 sm:pl-10 md:pl-12 pr-3 sm:pr-4 py-2 sm:py-2.5 md:py-3 text-xs sm:text-sm text-gray-700 shadow-inner"
             placeholder="Поиск..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 overflow-x-auto pb-1 sm:pb-0">
           {CATEGORIES.map(cat => (
             <button
               key={cat}
               onClick={() => setFilterCat(cat)}
-              className={`rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-semibold transition whitespace-nowrap ${
+              className={`rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold transition whitespace-nowrap ${
                 filterCat === cat
                   ? 'bg-[#8B4513] text-white shadow'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -232,7 +232,7 @@ export const Dashboard = ({ user, setPage }) => {
               return (
                 <div
                   key={offer.id}
-                  className={`relative flex flex-col gap-4 rounded-3xl border p-4 shadow-sm transition ${
+                  className={`relative flex flex-col gap-3 sm:gap-4 rounded-2xl sm:rounded-3xl border p-3 sm:p-4 shadow-sm transition ${
                     myOrder 
                       ? 'border-amber-300 bg-amber-50/30' 
                       : isReserved
@@ -259,8 +259,8 @@ export const Dashboard = ({ user, setPage }) => {
                   )}
                   
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="h-20 w-28 sm:h-20 sm:w-28 flex-shrink-0 overflow-hidden rounded-2xl bg-gray-100 flex items-center justify-center relative">
+                    <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                      <div className="h-16 w-20 sm:h-20 sm:w-28 flex-shrink-0 overflow-hidden rounded-xl sm:rounded-2xl bg-gray-100 flex items-center justify-center relative">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
@@ -337,13 +337,13 @@ export const Dashboard = ({ user, setPage }) => {
                   <div className="flex flex-wrap gap-2">
                     {user.role === 'client' && (
                       <>
-                        <Button variant="secondary" className="text-sm flex-1 sm:flex-initial min-w-[100px]" onClick={() => handleAction(offer, 'chat')}>
+                        <Button variant="secondary" className="text-xs sm:text-sm flex-1 sm:flex-initial min-w-[80px] sm:min-w-[100px] px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => handleAction(offer, 'chat')}>
                           Чат
                         </Button>
                         {myOrder ? (
                           <Button
                             variant="danger"
-                            className="text-sm flex-1 sm:flex-initial min-w-[100px]"
+                            className="text-xs sm:text-sm flex-1 sm:flex-initial min-w-[80px] sm:min-w-[100px] px-3 py-1.5 sm:px-4 sm:py-2"
                             onClick={() => handleAction(offer, 'cancel')}
                             disabled={myOrder.status === 'completed'}
                           >
@@ -351,7 +351,7 @@ export const Dashboard = ({ user, setPage }) => {
                           </Button>
                         ) : (
                           <Button
-                            className="text-sm flex-1 sm:flex-initial min-w-[120px]"
+                            className="text-xs sm:text-sm flex-1 sm:flex-initial min-w-[100px] sm:min-w-[120px] px-3 py-1.5 sm:px-4 sm:py-2"
                             onClick={() => handleAction(offer, 'order')}
                             disabled={offer.status !== 'available' || isExpired}
                             title={offer.status !== 'available' ? 'Товар уже забронирован' : isExpired ? 'Время истекло' : 'Забронировать товар'}
@@ -363,16 +363,16 @@ export const Dashboard = ({ user, setPage }) => {
                     )}
                     {user.role === 'business' && (
                       <>
-                        <Button variant="secondary" className="text-sm" onClick={() => handleAction(offer, 'chat')}>
+                        <Button variant="secondary" className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => handleAction(offer, 'chat')}>
                           Чат
                         </Button>
                         {myOrder && myOrder.status === 'pending' && (
-                          <Button className="text-sm" onClick={() => handleAction(offer, 'confirm')}>
+                          <Button className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => handleAction(offer, 'confirm')}>
                             Подтвердить
                           </Button>
                         )}
                         {myOrder && myOrder.status === 'confirmed' && (
-                          <Button className="text-sm" onClick={() => handleAction(offer, 'complete')}>
+                          <Button className="text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2" onClick={() => handleAction(offer, 'complete')}>
                             Готово
                           </Button>
                         )}
@@ -386,15 +386,15 @@ export const Dashboard = ({ user, setPage }) => {
         </section>
 
         <aside className="flex w-full lg:max-w-[360px] flex-col gap-4">
-          <div className="rounded-[32px] border border-gray-200 bg-[radial-gradient(circle_at_top,#FDF5E6_0%,#ffffff_60%)] p-4 sm:p-6 shadow-xl">
+          <div className="rounded-2xl sm:rounded-[32px] border border-gray-200 bg-[radial-gradient(circle_at_top,#FDF5E6_0%,#ffffff_60%)] p-4 sm:p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">New Offer</p>
-              <Button variant="ghost" className="text-xs" onClick={() => setPage && setPage('create')}>
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gray-500">New Offer</p>
+              <Button variant="ghost" className="text-[10px] sm:text-xs px-2 py-1 sm:px-3 sm:py-1.5" onClick={() => setPage && setPage('create')}>
                 Открыть
               </Button>
             </div>
-            <h3 className="mt-2 text-2xl font-semibold text-gray-900">{panelOffer.title}</h3>
-            <div className="mt-4 h-48 w-full overflow-hidden rounded-3xl bg-gray-100 flex items-center justify-center">
+            <h3 className="mt-2 text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 break-words">{panelOffer.title}</h3>
+            <div className="mt-4 h-40 sm:h-48 w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 flex items-center justify-center">
               {getOfferImageUrl(panelOffer) ? (
                 <img
                   src={getOfferImageUrl(panelOffer)}
@@ -406,10 +406,10 @@ export const Dashboard = ({ user, setPage }) => {
                   }}
                 />
               ) : (
-                <div className="text-sm text-gray-400 text-center p-4">Нет фото</div>
+                <div className="text-xs sm:text-sm text-gray-400 text-center p-4">Нет фото</div>
               )}
             </div>
-            <div className="mt-4 grid gap-3 text-sm text-gray-600">
+            <div className="mt-4 grid gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
               <div className="flex items-center justify-between">
                 <span>Original price</span>
                 <span className="line-through text-gray-400">{panelOffer.oldPrice} ₸</span>
@@ -423,12 +423,12 @@ export const Dashboard = ({ user, setPage }) => {
                 <span className="text-[#8B4513] font-semibold">{getCountdown(panelOffer.pickupTime)}</span>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">Description</p>
-                <p className="text-sm text-gray-700">{panelOffer.description}</p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-wide text-gray-500">Description</p>
+                <p className="text-xs sm:text-sm text-gray-700 break-words">{panelOffer.description}</p>
               </div>
             </div>
             <Button
-              className="mt-6 w-full justify-center bg-[#8B4513] text-white hover:bg-[#654321]"
+              className="mt-4 sm:mt-6 w-full justify-center bg-[#8B4513] text-white hover:bg-[#654321] text-xs sm:text-sm py-2 sm:py-2.5"
               onClick={() => setPage && setPage('create')}
             >
               Create Offer

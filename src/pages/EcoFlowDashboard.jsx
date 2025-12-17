@@ -214,14 +214,14 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header with filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-gray-900">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">
             {user.role === 'donor' ? 'Склад лотов' : 'Каталог ресурсов'}
           </h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
             Сегодня {new Date().toLocaleDateString('ru-RU')}
           </p>
         </div>
@@ -230,7 +230,7 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
           <select
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-            className="border border-gray-200 p-2.5 rounded-xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-sm"
+            className="border border-gray-200 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-white shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm w-full md:w-auto"
           >
             <option>Весь Казахстан</option>
             {Object.keys(locations).map(r => (
@@ -242,7 +242,7 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
 
       {/* Tabs for Donor */}
       {user.role === 'donor' && (
-        <div className="flex gap-1 bg-white p-1 rounded-xl border border-gray-200 w-fit shadow-sm">
+        <div className="flex gap-1 bg-white p-1 rounded-lg sm:rounded-xl border border-gray-200 w-full sm:w-fit shadow-sm overflow-x-auto">
           {[
             { id: 'active', label: 'Активные', icon: Package },
             { id: 'moderation', label: 'На модерации', icon: Eye },
@@ -251,26 +251,26 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-all ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                 tab === t.id
                   ? 'bg-emerald-500 text-white shadow'
                   : 'text-gray-500 hover:bg-gray-50'
               }`}
             >
-              <t.icon size={16} /> {t.label}
+              <t.icon size={14} className="sm:w-4 sm:h-4" /> {t.label}
             </button>
           ))}
         </div>
       )}
 
       {/* Search and Category Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
         <div className="flex-1 relative group">
-          <Search className="absolute left-3 top-3 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={20} />
+          <Search className="absolute left-3 top-3 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm"
+            className="w-full border border-gray-200 rounded-lg sm:rounded-xl pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all shadow-sm"
             placeholder="Поиск по названию..."
           />
         </div>
@@ -279,7 +279,7 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className={`px-5 py-2.5 rounded-xl border text-sm font-medium whitespace-nowrap transition-all ${
+              className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl border text-xs sm:text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
                 category === cat
                   ? 'bg-gray-900 text-white border-gray-900 shadow-md'
                   : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
@@ -311,7 +311,7 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
         </div>
       ) : (
         /* Posts Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredPosts.map(post => {
             const isMine = post.reservedBy === user.name;
             const distance = getDistance(post);
@@ -327,7 +327,7 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
               >
                 {/* Image/Icon Area */}
                 <div
-                  className={`h-40 flex items-center justify-center relative overflow-hidden ${
+                  className={`h-32 sm:h-40 flex items-center justify-center relative overflow-hidden ${
                     post.category === 'Отходы'
                       ? 'bg-gray-100'
                       : post.category === 'Еда'
@@ -336,8 +336,8 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
                   }`}
                 >
                   <CategoryIcon
-                    size={56}
-                    className={`${
+                    size={40}
+                    className={`sm:w-14 sm:h-14 ${
                       post.category === 'Отходы'
                         ? 'text-gray-400'
                         : post.category === 'Еда'
@@ -363,51 +363,51 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                <div className="p-3 sm:p-5 flex-1 flex flex-col">
+                  <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
                       {post.category}
                     </span>
                   </div>
-                  <h3 className="font-bold text-xl leading-snug mb-2 text-gray-800">
+                  <h3 className="font-bold text-base sm:text-lg md:text-xl leading-snug mb-1.5 sm:mb-2 text-gray-800 break-words">
                     {post.title}
                   </h3>
-                  <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-3 sm:mb-4 leading-relaxed">
                     {post.description}
                   </p>
-                  <div className="mt-auto pt-4 border-t border-gray-50 space-y-2 text-sm text-gray-600">
+                  <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-50 space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600">
                     <p className="flex gap-2 items-center">
-                      <MapPin size={16} className="text-emerald-500 shrink-0" />
+                      <MapPin size={14} className="sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
                       <span className="truncate">{post.location}</span>
                     </p>
                     <p className="flex gap-2 items-center">
-                      <Users size={16} className="text-emerald-500 shrink-0" />
-                      {post.author}
+                      <Users size={14} className="sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
+                      <span className="truncate">{post.author}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="p-4 bg-gray-50 border-t border-gray-100 grid grid-cols-2 gap-3">
+                <div className="p-3 sm:p-4 bg-gray-50 border-t border-gray-100 grid grid-cols-2 gap-2 sm:gap-3">
                   {user.role === 'recipient' && (
                     <>
                       <button
                         onClick={() => handleAction(post, 'chat')}
-                        className="px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all"
                       >
-                        <MessageCircle size={16} /> Чат
+                        <MessageCircle size={14} className="sm:w-4 sm:h-4" /> Чат
                       </button>
                       {isMine ? (
                         <button
                           onClick={() => handleAction(post, 'cancel')}
-                          className="px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-sm bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-red-50 text-red-600 hover:bg-red-100 transition-all"
                         >
-                          <Ban size={16} /> Отмена
+                          <Ban size={14} className="sm:w-4 sm:h-4" /> Отмена
                         </button>
                       ) : (
                         <button
                           onClick={() => handleAction(post, 'reserve')}
-                          className="px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all"
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all"
                         >
                           Забрать
                         </button>
@@ -417,9 +417,9 @@ export const EcoFlowDashboard = ({ user, api, onNavigate }) => {
                   {user.role === 'donor' && (
                     <button
                       onClick={() => handleAction(post, 'chat')}
-                      className="col-span-2 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all"
+                      className="col-span-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 transition-all"
                     >
-                      <MessageCircle size={16} /> Открыть чат
+                      <MessageCircle size={14} className="sm:w-4 sm:h-4" /> Открыть чат
                     </button>
                   )}
                 </div>

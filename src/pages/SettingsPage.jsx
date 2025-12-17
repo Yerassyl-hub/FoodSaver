@@ -11,42 +11,48 @@ export const SettingsPage = () => {
   };
   
   return (
-    <div className="p-6 max-w-lg">
-      <h2 className="text-2xl font-bold mb-4">Настройки</h2>
-      <label className="block text-sm font-bold mb-2">
-        Google Gemini API Key (для ИИ)
-      </label>
-      <input 
-        type="password" 
-        value={key} 
-        onChange={e => setKey(e.target.value)} 
-        className="w-full border p-2 rounded mb-4"
-        placeholder="Введите API ключ"
-      />
-      <Button onClick={save}>Сохранить ключ</Button>
-      <p className="text-xs text-gray-500 mt-2">
-        Получите ключ на{' '}
-        <a 
-          href="https://aistudio.google.com/app/apikey" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-[#8B4513] hover:underline"
-        >
-          Google AI Studio
-        </a>
-        {' '}или{' '}
-        <a 
-          href="https://makersuite.google.com/app/apikey" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-[#8B4513] hover:underline"
-        >
-          MakerSuite
-        </a>
-      </p>
-      <p className="text-xs text-amber-600 mt-2">
-        ⚠️ Если API ключ не работает, генератор будет использовать простые шаблоны описаний.
-      </p>
+    <div className="w-full max-w-lg">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Настройки</h2>
+      <div className="space-y-4 sm:space-y-6">
+        <div>
+          <label className="block text-sm sm:text-base font-bold mb-2">
+            Google Gemini API Key (для ИИ)
+          </label>
+          <input 
+            type="password" 
+            value={key} 
+            onChange={e => setKey(e.target.value)} 
+            className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base mb-4"
+            placeholder="Введите API ключ"
+          />
+        </div>
+        <Button onClick={save} className="w-full sm:w-auto text-sm sm:text-base py-2.5 sm:py-3">Сохранить ключ</Button>
+        <div className="space-y-2">
+          <p className="text-xs sm:text-sm text-gray-500">
+            Получите ключ на{' '}
+            <a 
+              href="https://aistudio.google.com/app/apikey" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#8B4513] hover:underline break-all"
+            >
+              Google AI Studio
+            </a>
+            {' '}или{' '}
+            <a 
+              href="https://makersuite.google.com/app/apikey" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#8B4513] hover:underline break-all"
+            >
+              MakerSuite
+            </a>
+          </p>
+          <p className="text-xs sm:text-sm text-amber-600">
+            ⚠️ Если API ключ не работает, генератор будет использовать простые шаблоны описаний.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -428,14 +428,14 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
   const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${getBbox()}&layer=mapnik&marker=${coords.lat},${coords.lng}`;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="font-bold text-sm block">Адрес и местоположение</label>
-        <div className="flex gap-2">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+        <label className="font-bold text-xs sm:text-sm block">Адрес и местоположение</label>
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => setIsSelecting(!isSelecting)}
-            className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={`text-[10px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap ${
               isSelecting
                 ? 'bg-[#8B4513] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -446,7 +446,7 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
           <button
             type="button"
             onClick={showAllKazakhstan}
-            className="text-xs px-3 py-1.5 rounded-lg font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center gap-1"
+            className="text-[10px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center gap-1 whitespace-nowrap"
             title="Показать весь Казахстан"
           >
             <RotateCcw size={12} />
@@ -455,7 +455,7 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
           <button
             type="button"
             onClick={useCurrentLocation}
-            className="text-xs px-3 py-1.5 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1"
+            className="text-[10px] sm:text-xs px-2.5 sm:px-3 py-1.5 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
           >
             <Navigation size={12} />
             Мое место
@@ -464,17 +464,17 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
       </div>
       
       {isSelecting && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-2 rounded-lg text-xs">
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg text-[10px] sm:text-xs">
           <strong>Режим выбора:</strong> Кликните на карте ниже, чтобы установить адрес
         </div>
       )}
 
       {/* Поле ввода адреса */}
       <div>
-        <label className="text-xs text-gray-600 mb-1.5 block font-medium">Адрес</label>
-        <form onSubmit={handleAddressSubmit} className="flex gap-2">
+        <label className="text-[10px] sm:text-xs text-gray-600 mb-1.5 block font-medium">Адрес</label>
+        <form onSubmit={handleAddressSubmit} className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 text-gray-400" size={16} />
+            <Search className="absolute left-2.5 sm:left-3 top-2.5 sm:top-3 text-gray-400" size={14} />
             <input
               ref={addressInputRef}
               type="text"
@@ -486,11 +486,11 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
                 }
               }}
               placeholder="Введите адрес (например: Алматы, Абая 10)"
-              className="w-full border-2 border-gray-200 pl-10 pr-3 py-2.5 rounded-lg text-sm focus:border-[#8B4513] focus:ring-1 focus:ring-[#8B4513] outline-none"
+              className="w-full border-2 border-gray-200 pl-9 sm:pl-10 pr-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm focus:border-[#8B4513] focus:ring-1 focus:ring-[#8B4513] outline-none"
             />
             {isLoadingAddress && (
-              <div className="absolute right-3 top-3">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#8B4513]"></div>
+              <div className="absolute right-2.5 sm:right-3 top-2.5 sm:top-3">
+                <div className="animate-spin rounded-full h-3.5 sm:h-4 w-3.5 sm:w-4 border-b-2 border-[#8B4513]"></div>
               </div>
             )}
           </div>
@@ -498,12 +498,12 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
             type="button"
             onClick={handleAddressSubmit}
             disabled={isSearching || isLoadingAddress}
-            className="px-4 py-2.5 bg-[#8B4513] text-white rounded-lg hover:bg-[#654321] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+            className="px-3 sm:px-4 py-2 sm:py-2.5 bg-[#8B4513] text-white rounded-lg hover:bg-[#654321] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm font-medium whitespace-nowrap"
           >
             {isSearching ? '...' : 'Найти'}
           </button>
         </form>
-        <p className="text-xs text-gray-500 mt-1.5">
+        <p className="text-[10px] sm:text-xs text-gray-500 mt-1.5">
           Введите адрес или выберите точку на карте. Используйте колесико мыши для зума.
         </p>
       </div>
@@ -512,7 +512,7 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
       <div
         ref={mapContainerRef}
         onMouseDown={handleMouseDown}
-        className={`w-full h-80 rounded-lg overflow-hidden border-2 relative ${
+        className={`w-full h-64 sm:h-80 rounded-lg overflow-hidden border-2 relative ${
           isSelecting 
             ? 'border-[#8B4513] cursor-crosshair' 
             : isDragging
@@ -534,16 +534,16 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
         ></iframe>
         
         {/* Интерактивный маркер */}
-        <div 
+        <div
           className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 transition-all ${
             isSelecting ? 'animate-pulse' : ''
           }`}
           style={{ pointerEvents: 'none' }}
         >
-          <MapPin 
-            className="text-[#8B4513] drop-shadow-lg" 
-            size={36} 
-            fill="currentColor" 
+          <MapPin
+            className="text-[#8B4513] drop-shadow-lg"
+            size={28}
+            fill="currentColor"
           />
         </div>
 
@@ -616,13 +616,13 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
         </div>
 
         {/* Индикатор уровня зума и координат */}
-        <div 
-          className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm border border-gray-300 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 shadow-lg space-y-1"
+        <div
+          className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 bg-white/95 backdrop-blur-sm border border-gray-300 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-[10px] sm:text-xs font-medium text-gray-700 shadow-lg space-y-0.5 sm:space-y-1"
           style={{ zIndex: 30 }}
           onClick={(e) => e.stopPropagation()}
         >
           <div>Масштаб: {zoom}</div>
-          <div className="text-[10px] text-gray-500 font-mono">
+          <div className="text-[9px] sm:text-[10px] text-gray-500 font-mono">
             {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
           </div>
         </div>
@@ -649,12 +649,12 @@ export const MapPicker = ({ onLocationSelect, initialCoords = null, initialAddre
 
       {/* Информация о выбранном адресе */}
       {address && (
-        <div className="bg-[#8B4513]/10 border border-[#8B4513]/20 text-[#8B4513] px-4 py-3 rounded-lg text-sm">
+        <div className="bg-[#8B4513]/10 border border-[#8B4513]/20 text-[#8B4513] px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-xs sm:text-sm">
           <div className="flex items-start gap-2">
-            <MapPin size={16} className="mt-0.5 shrink-0" />
-            <div className="flex-1">
+            <MapPin size={14} className="mt-0.5 shrink-0 sm:w-4 sm:h-4" />
+            <div className="flex-1 min-w-0">
               <strong className="block mb-1">Выбранный адрес:</strong>
-              <p className="font-medium">{address}</p>
+              <p className="font-medium break-words">{address}</p>
             </div>
           </div>
         </div>

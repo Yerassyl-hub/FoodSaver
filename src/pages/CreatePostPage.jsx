@@ -118,36 +118,36 @@ export const CreatePostPage = ({ user, onBack }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow mt-6">
+    <div className="max-w-2xl mx-auto w-full">
       <button 
         onClick={onBack} 
-        className="flex items-center gap-2 text-gray-500 mb-6 hover:text-gray-700"
+        className="flex items-center gap-2 text-gray-500 mb-4 sm:mb-6 hover:text-gray-700 text-sm sm:text-base"
       >
         <ArrowLeft size={16}/> Назад
       </button>
-      <h2 className="text-2xl font-bold mb-6">Создать предложение</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Создать предложение</h2>
       
-      <form onSubmit={submit} className="space-y-4">
+      <form onSubmit={submit} className="space-y-4 sm:space-y-6">
         <div>
-          <label className="font-bold text-sm block mb-1">Название блюда</label>
+          <label className="font-bold text-sm block mb-1.5 sm:mb-2">Название блюда</label>
           <input 
             id="title" 
             name="title" 
             required 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border p-2 rounded" 
+            className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base" 
             placeholder="Например: Пицца Маргарита"
           />
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 space-y-2 sm:space-y-3">
             <div className="flex flex-col gap-2">
-              <label className="text-xs font-bold text-gray-600">Фото товара</label>
+              <label className="text-xs sm:text-sm font-bold text-gray-600">Фото товара</label>
               <input
                 ref={imageInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleImageUpload}
-                className="text-sm text-gray-500"
+                className="text-xs sm:text-sm text-gray-500"
               />
               {uploadedImageUrl && (
                 <button
@@ -162,7 +162,7 @@ export const CreatePostPage = ({ user, onBack }) => {
 
             {previewImageUrl && (
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs text-gray-600">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
                   <ImageIcon size={16} className="text-[#8B4513]" />
                   <span>
                     {uploadedImageUrl
@@ -173,7 +173,7 @@ export const CreatePostPage = ({ user, onBack }) => {
                 <img
                   src={previewImageUrl}
                   alt={title}
-                  className="w-full h-48 object-cover rounded-lg border border-gray-200 shadow-sm"
+                  className="w-full h-40 sm:h-48 object-cover rounded-lg border border-gray-200 shadow-sm"
                   onError={(e) => {
                     e.target.onerror = null;
                     if (uploadedImageUrl) {
@@ -189,45 +189,45 @@ export const CreatePostPage = ({ user, onBack }) => {
         </div>
         
         <div>
-          <label className="font-bold text-sm block mb-1">Категория</label>
-          <select id="cat" name="category" className="w-full border p-2 rounded">
+          <label className="font-bold text-sm block mb-1.5 sm:mb-2">Категория</label>
+          <select id="cat" name="category" className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base">
             {CATEGORIES.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="font-bold text-sm block mb-1">Обычная цена (₸)</label>
+            <label className="font-bold text-sm block mb-1.5 sm:mb-2">Обычная цена (₸)</label>
             <input 
               name="oldPrice" 
               type="number" 
               step="0.01"
               required 
-              className="w-full border p-2 rounded" 
+              className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base" 
               placeholder="2500"
             />
           </div>
           <div>
-            <label className="font-bold text-sm block mb-1">Цена со скидкой (₸)</label>
+            <label className="font-bold text-sm block mb-1.5 sm:mb-2">Цена со скидкой (₸)</label>
             <input 
               name="newPrice" 
               type="number" 
               step="0.01"
               required 
-              className="w-full border p-2 rounded" 
+              className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base" 
               placeholder="1000"
             />
           </div>
         </div>
 
         <div>
-          <label className="font-bold text-sm block mb-1">Забрать до</label>
+          <label className="font-bold text-sm block mb-1.5 sm:mb-2">Забрать до</label>
           <input 
             name="pickupTime" 
             type="datetime-local" 
             required 
             min={getMinDateTime()}
-            className="w-full border p-2 rounded"
+            className="w-full border p-2.5 sm:p-3 rounded-lg text-sm sm:text-base"
           />
         </div>
 
@@ -240,12 +240,12 @@ export const CreatePostPage = ({ user, onBack }) => {
         </div>
 
         <div>
-          <div className="flex justify-between mb-1">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-1.5 sm:mb-2">
             <label className="font-bold text-sm">Описание</label>
             <button 
               type="button" 
               onClick={handleAI} 
-              className="text-purple-600 text-xs flex items-center gap-1 font-bold hover:text-purple-700"
+              className="text-purple-600 text-xs flex items-center gap-1 font-bold hover:text-purple-700 self-start sm:self-auto"
             >
               {aiLoading ? (
                 <Loader2 className="animate-spin" size={12}/>
@@ -258,12 +258,12 @@ export const CreatePostPage = ({ user, onBack }) => {
             name="description" 
             value={desc} 
             onChange={e => setDesc(e.target.value)} 
-            className="w-full border p-2 rounded h-24"
+            className="w-full border p-2.5 sm:p-3 rounded-lg h-24 sm:h-32 text-sm sm:text-base"
             required
           />
         </div>
 
-        <Button className="w-full justify-center">Опубликовать</Button>
+        <Button className="w-full justify-center text-sm sm:text-base py-2.5 sm:py-3">Опубликовать</Button>
       </form>
     </div>
   );
