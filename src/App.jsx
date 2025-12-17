@@ -38,11 +38,15 @@ export default function App() {
       const hash = window.location.hash.substring(1);
       
       if (!user) {
-        // Not logged in
-        if (hash === 'login' || hash === '') {
+        // Not logged in - show landing page by default
+        if (hash === 'login') {
           setPage('login');
         } else {
+          // Default to landing page (empty hash or any other hash)
           setPage('landing');
+          if (hash && hash !== 'landing') {
+            window.location.hash = 'landing';
+          }
         }
       } else {
         // Logged in
@@ -99,14 +103,13 @@ export default function App() {
     );
   }
 
-  // Show landing page if not logged in and on landing route
-  if (!user && page === 'landing') {
-    return <LandingPage onNavigate={handleNavigate} onLogin={handleLogin} />;
-  }
-
-  // Show login page if not logged in
+  // Show landing page if not logged in (default)
   if (!user) {
-    return <Login onLogin={handleLogin} />;
+    if (page === 'login') {
+      return <Login onLogin={handleLogin} />;
+    }
+    // Default to landing page
+    return <LandingPage onNavigate={handleNavigate} onLogin={handleLogin} />;
   }
 
   return (
