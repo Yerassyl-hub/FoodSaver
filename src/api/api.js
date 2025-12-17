@@ -54,7 +54,55 @@ export const api = {
 
   loadDB: () => {
     const saved = localStorage.getItem(DB_KEY);
-    return saved ? JSON.parse(saved) : INITIAL_DATA;
+    if (!saved) {
+      // Если нет сохраненных данных, используем INITIAL_DATA и сохраняем их
+      this.saveDB(INITIAL_DATA);
+      return INITIAL_DATA;
+    }
+    
+    try {
+      const parsed = JSON.parse(saved);
+      // Проверяем, что структура данных правильная
+      if (!parsed.users || !Array.isArray(parsed.users)) {
+        console.warn('Invalid DB structure, resetting to INITIAL_DATA');
+        this.saveDB(INITIAL_DATA);
+        return INITIAL_DATA;
+      }
+      
+      // Проверяем, есть ли все необходимые пользователи
+      const requiredUsers = INITIAL_DATA.users.map(u => u.email.toLowerCase());
+      const existingUsers = parsed.users.map(u => (u.email || '').toLowerCase());
+      
+      // Если не хватает пользователей, обновляем базу
+      const missingUsers = requiredUsers.filter(email => !existingUsers.includes(email));
+      if (missingUsers.length > 0) {
+        console.log('Adding missing users:', missingUsers);
+        // Добавляем недостающих пользователей
+        INITIAL_DATA.users.forEach(initialUser => {
+          const exists = parsed.users.find(u => 
+            (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
+          );
+          if (!exists) {
+            parsed.users.push(initialUser);
+          } else {
+            // Обновляем существующего пользователя (на случай изменения пароля)
+            const index = parsed.users.findIndex(u => 
+              (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
+            );
+            if (index !== -1) {
+              parsed.users[index] = { ...parsed.users[index], ...initialUser };
+            }
+          }
+        });
+        this.saveDB(parsed);
+      }
+      
+      return parsed;
+    } catch (e) {
+      console.error('Error parsing DB:', e);
+      this.saveDB(INITIAL_DATA);
+      return INITIAL_DATA;
+    }
   },
 
   saveDB: (data) => {
@@ -88,14 +136,16 @@ export const api = {
     });
     
     if (!user) {
-      console.error('Login failed:', { 
-        email: normalizedEmail, 
+      console.error('Login failed:', {
+        email: normalizedEmail,
+        passwordProvided: normalizedPassword,
         passwordLength: normalizedPassword.length,
-        users: db.users.map(u => ({ 
-          email: u.email, 
+        usersInDB: db.users.map(u => ({
+          email: u.email,
           pass: u.pass || u.password || 'none',
-          role: u.role 
-        })) 
+          passType: typeof (u.pass || u.password),
+          role: u.role
+        }))
       });
       throw new Error('Неверный логин или пароль');
     }
