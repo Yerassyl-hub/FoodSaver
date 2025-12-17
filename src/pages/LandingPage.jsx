@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Recycle, Package } from 'lucide-react';
 import { api } from '../api/api';
 
@@ -6,6 +6,27 @@ const LandingPage = ({ onNavigate, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imageError, setImageError] = useState(false);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+
+  // Функция для заполнения полей при клике на тестовый аккаунт
+  const fillCredentials = (email, password) => {
+    if (emailInputRef.current) {
+      emailInputRef.current.value = email;
+      // Триггерим событие change для React
+      emailInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (passwordInputRef.current) {
+      passwordInputRef.current.value = password;
+      passwordInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    // Убираем ошибку если была
+    setError('');
+    // Фокус на поле пароля для удобства
+    if (passwordInputRef.current) {
+      passwordInputRef.current.focus();
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -120,6 +141,7 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                   Email адрес
                 </label>
                 <input
+                  ref={emailInputRef}
                   name="email"
                   type="email"
                   placeholder="your@email.com"
@@ -134,6 +156,7 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                   Пароль
                 </label>
                 <input
+                  ref={passwordInputRef}
                   name="password"
                   type="password"
                   placeholder="••••••••"
@@ -171,35 +194,50 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                 Тестовые аккаунты
               </p>
               <div className="space-y-1.5">
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex justify-between items-center border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div 
+                  onClick={() => fillCredentials('admin@test.com', 'admin')}
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex justify-between items-center border border-gray-200 hover:border-[#8B4513] hover:bg-gray-100 transition-all cursor-pointer active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                     <span className="text-xs font-semibold text-gray-700">Администратор</span>
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">admin@test.com / admin</span>
                 </div>
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex justify-between items-center border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div 
+                  onClick={() => fillCredentials('cafe@test.com', '123')}
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex justify-between items-center border border-gray-200 hover:border-[#8B4513] hover:bg-gray-100 transition-all cursor-pointer active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                     <span className="text-xs font-semibold text-gray-700">Донор</span>
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">cafe@test.com / 123</span>
                 </div>
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div 
+                  onClick={() => fillCredentials('client@test.com', '123')}
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513] hover:bg-gray-100 transition-all cursor-pointer active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                     <span className="text-xs font-semibold text-gray-700">Клиент 1</span>
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">client@test.com / 123</span>
                 </div>
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div 
+                  onClick={() => fillCredentials('client2@test.com', '123')}
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513] hover:bg-gray-100 transition-all cursor-pointer active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                     <span className="text-xs font-semibold text-gray-700">Клиент 2</span>
                   </div>
                   <span className="font-mono text-[10px] text-gray-600 bg-white px-1.5 py-0.5 rounded border">client2@test.com / 123</span>
                 </div>
-                <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513]/30 transition-colors">
+                <div 
+                  onClick={() => fillCredentials('client3@test.com', '123')}
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-2.5 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border border-gray-200 hover:border-[#8B4513] hover:bg-gray-100 transition-all cursor-pointer active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                     <span className="text-xs font-semibold text-gray-700">Клиент 3</span>
