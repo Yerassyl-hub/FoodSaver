@@ -124,7 +124,32 @@ export const api = {
 
   async login(email, password) {
     await delay(500);
+    // Принудительно синхронизируем пользователей перед попыткой входа
     const db = this.loadDB();
+    
+    // Дополнительная проверка: убеждаемся, что все пользователи из INITIAL_DATA есть в базе с правильными паролями
+    let dbUpdated = false;
+    INITIAL_DATA.users.forEach(initialUser => {
+      const existing = db.users.find(u => 
+        (u.email || '').toLowerCase() === (initialUser.email || '').toLowerCase()
+      );
+      if (!existing) {
+        db.users.push(initialUser);
+        dbUpdated = true;
+      } else {
+        const initialPass = String(initialUser.pass || initialUser.password || '').trim();
+        const existingPass = String(existing.pass || existing.password || '').trim();
+        if (initialPass !== existingPass) {
+          existing.pass = initialUser.pass || initialUser.password;
+          existing.password = initialUser.pass || initialUser.password;
+          dbUpdated = true;
+        }
+      }
+    });
+    if (dbUpdated) {
+      this.saveDB(db);
+      console.log('Database users synchronized before login');
+    }
     
     // Нормализуем email (убираем пробелы, приводим к нижнему регистру)
     const normalizedEmail = (email || '').trim().toLowerCase();
