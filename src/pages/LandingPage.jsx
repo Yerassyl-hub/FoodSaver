@@ -30,9 +30,9 @@ const LandingPage = ({ onNavigate, onLogin }) => {
     setLoading(true);
     setError('');
     
-    // Получаем значения из контролируемых полей или из формы
-    const emailValue = email || e.target.email?.value || '';
-    const passwordValue = password || e.target.password?.value || '';
+    // Получаем значения из контролируемых полей (state)
+    const emailValue = email.trim();
+    const passwordValue = password.trim();
     
     if (!emailValue || !passwordValue) {
       setError('Заполните все поля');
@@ -40,8 +40,10 @@ const LandingPage = ({ onNavigate, onLogin }) => {
       return;
     }
     
+    console.log('Attempting login:', { email: emailValue, passwordLength: passwordValue.length });
+    
     try {
-      const user = await api.login(emailValue.trim(), passwordValue.trim());
+      const user = await api.login(emailValue, passwordValue);
       if (onLogin) {
         onLogin(user);
       } else if (onNavigate) {
