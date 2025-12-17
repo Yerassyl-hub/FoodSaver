@@ -26,12 +26,11 @@ export const INITIAL_DATA = {
       id: 1, 
       userId: 4, // ID пользователя cafe@test.com (business)
       name: 'Кафе "Уют"', 
-      address: 'Абая 10', 
+      address: 'Абая 10, Алматы', 
       city: 'Алматы', 
       region: 'г. Алматы', 
       phone: '+7 777 123 4567',
-      coords: { lat: 43.2220, lng: 76.8512 }, // Координаты Алматы
-      address: 'Абая 10, Алматы' // Полный адрес
+      coords: { lat: 43.2220, lng: 76.8512 } // Координаты Алматы
     },
   ],
   foodOffers: [
