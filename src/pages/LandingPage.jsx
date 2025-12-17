@@ -200,9 +200,26 @@ const LandingPage = ({ onNavigate, onLogin }) => {
 
             {/* Demo Accounts */}
             <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs font-bold text-gray-400 uppercase text-center mb-3 tracking-wider">
-                Тестовые аккаунты
-              </p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  Тестовые аккаунты
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm('Сбросить базу данных? Это очистит все сохраненные данные.')) {
+                      localStorage.removeItem('foodsaver_v1');
+                      localStorage.removeItem('foodsaver_user');
+                      alert('База данных сброшена! Страница будет перезагружена.');
+                      window.location.reload();
+                    }
+                  }}
+                  className="text-[10px] text-red-600 hover:text-red-700 hover:underline"
+                  title="Сбросить базу данных"
+                >
+                  Сброс БД
+                </button>
+              </div>
               <div className="space-y-1.5">
                 <div 
                   onClick={() => fillCredentials('admin@test.com', 'admin')}
