@@ -6,26 +6,23 @@ const LandingPage = ({ onNavigate, onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [imageError, setImageError] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
 
   // Функция для заполнения полей при клике на тестовый аккаунт
-  const fillCredentials = (email, password) => {
-    if (emailInputRef.current) {
-      emailInputRef.current.value = email;
-      // Триггерим событие change для React
-      emailInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    if (passwordInputRef.current) {
-      passwordInputRef.current.value = password;
-      passwordInputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
-    }
+  const fillCredentials = (emailValue, passwordValue) => {
+    setEmail(emailValue);
+    setPassword(passwordValue);
     // Убираем ошибку если была
     setError('');
     // Фокус на поле пароля для удобства
-    if (passwordInputRef.current) {
-      passwordInputRef.current.focus();
-    }
+    setTimeout(() => {
+      if (passwordInputRef.current) {
+        passwordInputRef.current.focus();
+      }
+    }, 0);
   };
 
   const handleLogin = async (e) => {
@@ -33,11 +30,18 @@ const LandingPage = ({ onNavigate, onLogin }) => {
     setLoading(true);
     setError('');
     
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    // Получаем значения из контролируемых полей или из формы
+    const emailValue = email || e.target.email?.value || '';
+    const passwordValue = password || e.target.password?.value || '';
+    
+    if (!emailValue || !passwordValue) {
+      setError('Заполните все поля');
+      setLoading(false);
+      return;
+    }
     
     try {
-      const user = await api.login(email, password);
+      const user = await api.login(emailValue.trim(), passwordValue.trim());
       if (onLogin) {
         onLogin(user);
       } else if (onNavigate) {
@@ -144,6 +148,8 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                   ref={emailInputRef}
                   name="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
                   className="w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-lg outline-none transition-all duration-200 focus:bg-white focus:border-[#8B4513] focus:shadow-md focus:shadow-[#8B4513]/10 text-sm"
@@ -159,6 +165,8 @@ const LandingPage = ({ onNavigate, onLogin }) => {
                   ref={passwordInputRef}
                   name="password"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
                   className="w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-lg outline-none transition-all duration-200 focus:bg-white focus:border-[#8B4513] focus:shadow-md focus:shadow-[#8B4513]/10 text-sm"

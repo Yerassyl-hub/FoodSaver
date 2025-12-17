@@ -66,18 +66,37 @@ export const api = {
     const db = this.loadDB();
     
     // Нормализуем email (убираем пробелы, приводим к нижнему регистру)
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedPassword = password.trim();
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    const normalizedPassword = (password || '').trim();
+    
+    if (!normalizedEmail || !normalizedPassword) {
+      throw new Error('Заполните все поля');
+    }
     
     // Ищем пользователя
     const user = db.users.find(u => {
       const userEmail = (u.email || '').trim().toLowerCase();
-      const userPass = u.pass || u.password || '';
-      return userEmail === normalizedEmail && userPass === normalizedPassword;
+      // Проверяем оба варианта: pass и password
+      const userPass = String(u.pass || u.password || '').trim();
+      const matches = userEmail === normalizedEmail && userPass === normalizedPassword;
+      
+      if (matches) {
+        console.log('Login success:', { email: normalizedEmail, userId: u.id, role: u.role });
+      }
+      
+      return matches;
     });
     
     if (!user) {
-      console.error('Login failed:', { email: normalizedEmail, users: db.users.map(u => ({ email: u.email, hasPass: !!u.pass })) });
+      console.error('Login failed:', { 
+        email: normalizedEmail, 
+        passwordLength: normalizedPassword.length,
+        users: db.users.map(u => ({ 
+          email: u.email, 
+          pass: u.pass || u.password || 'none',
+          role: u.role 
+        })) 
+      });
       throw new Error('Неверный логин или пароль');
     }
     
