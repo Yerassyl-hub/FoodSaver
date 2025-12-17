@@ -64,8 +64,23 @@ export const api = {
   async login(email, password) {
     await delay(500);
     const db = this.loadDB();
-    const user = db.users.find(u => u.email === email && u.pass === password);
-    if (!user) throw new Error('Неверный логин или пароль');
+    
+    // Нормализуем email (убираем пробелы, приводим к нижнему регистру)
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+    
+    // Ищем пользователя
+    const user = db.users.find(u => {
+      const userEmail = (u.email || '').trim().toLowerCase();
+      const userPass = u.pass || u.password || '';
+      return userEmail === normalizedEmail && userPass === normalizedPassword;
+    });
+    
+    if (!user) {
+      console.error('Login failed:', { email: normalizedEmail, users: db.users.map(u => ({ email: u.email, hasPass: !!u.pass })) });
+      throw new Error('Неверный логин или пароль');
+    }
+    
     return user;
   },
 
@@ -74,7 +89,11 @@ export const api = {
     const db = this.loadDB();
     return db.foodOffers.map(offer => {
       const restaurant = db.restaurants.find(r => r.id === offer.restaurantId);
-      return { ...offer, restaurant };
+      // Если у поста нет координат, используем координаты ресторана
+      const coords = offer.coords || restaurant?.coords || null;
+      // Если у поста нет адреса, используем адрес ресторана
+      const address = offer.address || restaurant?.address || null;
+      return { ...offer, restaurant, coords, address };
     });
   },
 
@@ -84,12 +103,18 @@ export const api = {
     const restaurant = db.restaurants.find(r => r.userId === userId);
     if (!restaurant) throw new Error('Ресторан не найден');
     
+    // Используем координаты ресторана, если они есть
+    const coords = offerData.coords || restaurant.coords || null;
+    const address = offerData.address || restaurant.address || null;
+    
     const newOffer = {
       id: Date.now(),
       ...offerData,
       restaurantId: restaurant.id,
       status: 'pending_approval',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      coords,
+      address
     };
     db.foodOffers.unshift(newOffer);
     this.saveDB(db);
@@ -108,10 +133,28 @@ export const api = {
   async createOrder(offerId, clientId) {
     await delay(500);
     const db = this.loadDB();
+    
+    // Атомарная проверка и обновление статуса
     const offer = db.foodOffers.find(f => f.id === offerId);
     if (!offer) throw new Error('Предложение не найдено');
-    if (offer.status !== 'available') throw new Error('Предложение недоступно');
     
+    // Критическая проверка: если товар уже забронирован, выбрасываем ошибку
+    if (offer.status !== 'available') {
+      // Проверяем, не забронировал ли уже этот пользователь
+      const existingOrder = db.orders.find(o => o.foodOfferId === offerId && o.clientId === clientId);
+      if (existingOrder) {
+        throw new Error('Вы уже забронировали этот товар');
+      }
+      throw new Error('К сожалению, этот товар уже забронирован другим пользователем. Обновите страницу.');
+    }
+    
+    // Проверяем, нет ли уже заказа на этот товар (защита от race condition)
+    const existingOrderForOffer = db.orders.find(o => o.foodOfferId === offerId && o.status !== 'cancelled');
+    if (existingOrderForOffer) {
+      throw new Error('Этот товар уже забронирован. Обновите страницу.');
+    }
+    
+    // Атомарное создание заказа и обновление статуса
     const newOrder = {
       id: Date.now(),
       foodOfferId: offerId,
@@ -122,6 +165,8 @@ export const api = {
     };
     db.orders.push(newOrder);
     offer.status = 'reserved';
+    offer.reservedBy = clientId; // Сохраняем, кто забронировал
+    offer.reservedAt = new Date().toISOString(); // Время бронирования
     this.saveDB(db);
     return newOrder;
   },

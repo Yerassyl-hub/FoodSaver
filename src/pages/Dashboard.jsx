@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Clock, DollarSign } from 'lucide-react';
+import { Search, Clock, DollarSign, MapPin } from 'lucide-react';
 import { Button } from '../components/Button';
 import { StatusBadge } from '../components/StatusBadge';
 import { ChatModal } from '../components/ChatModal';
 import { api } from '../api/api';
 import { CATEGORIES } from '../utils/constants';
+import { getUserLocation, getDistanceFromLatLonInKm } from '../utils/geolocation';
 
 const getCountdown = (pickupTime) => {
   const diff = new Date(pickupTime) - new Date();
@@ -26,10 +27,23 @@ export const Dashboard = ({ user, setPage }) => {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('active');
   const [chatOffer, setChatOffer] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
     load();
-  }, []);
+    // Запрашиваем геолокацию при загрузке страницы
+    getUserLocation().then(setUserLocation);
+    
+    // Автоматическое обновление списка товаров для клиентов (каждые 3 секунды)
+    // Это позволяет видеть, когда товар забронирован другим пользователем
+    if (user.role === 'client') {
+      const interval = setInterval(() => {
+        load();
+      }, 3000); // Обновление каждые 3 секунды
+      
+      return () => clearInterval(interval);
+    }
+  }, [user.role]);
 
   const load = async () => {
     const offersData = await api.getFoodOffers();
@@ -42,12 +56,33 @@ export const Dashboard = ({ user, setPage }) => {
 
   const handleAction = async (offer, action) => {
     if (action === 'order') {
+      // Проверяем статус перед подтверждением
+      if (offer.status !== 'available') {
+        alert('Этот товар уже забронирован. Страница будет обновлена.');
+        load();
+        return;
+      }
+      
       if (confirm('Вы уверены, что хотите заказать это предложение?')) {
         try {
+          // Дополнительная проверка перед отправкой
+          const currentOffers = await api.getFoodOffers();
+          const currentOffer = currentOffers.find(o => o.id === offer.id);
+          
+          if (!currentOffer || currentOffer.status !== 'available') {
+            alert('К сожалению, этот товар уже забронирован другим пользователем. Страница будет обновлена.');
+            load();
+            return;
+          }
+          
           await api.createOrder(offer.id, user.id);
-          load();
+          // Немедленное обновление после успешного бронирования
+          await load();
+          alert('Товар успешно забронирован!');
         } catch (err) {
-          alert(err.message);
+          // Обновляем список при ошибке, чтобы показать актуальный статус
+          load();
+          alert(err.message || 'Не удалось забронировать товар. Возможно, он уже занят.');
         }
       }
     } else if (action === 'cancel') {
@@ -179,16 +214,53 @@ export const Dashboard = ({ user, setPage }) => {
               const myOrder = orders.find(o => o.foodOfferId === offer.id);
               const isExpired = new Date(offer.pickupTime) < new Date();
               const imageUrl = getOfferImageUrl(offer);
+              
+              // Расчет дистанции для каждого поста
+              let distString = null;
+              if (userLocation && offer.coords) {
+                const km = getDistanceFromLatLonInKm(
+                  userLocation.lat, 
+                  userLocation.lng, 
+                  offer.coords.lat, 
+                  offer.coords.lng
+                );
+                if (km !== null) distString = `${km} км от вас`;
+              }
+              
+              const isReserved = offer.status === 'reserved' && !myOrder;
+              
               return (
                 <div
                   key={offer.id}
-                  className={`flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-4 shadow-sm transition ${
-                    myOrder ? 'border-amber-300 bg-amber-50/30' : ''
+                  className={`relative flex flex-col gap-4 rounded-3xl border p-4 shadow-sm transition ${
+                    myOrder 
+                      ? 'border-amber-300 bg-amber-50/30' 
+                      : isReserved
+                      ? 'border-red-200 bg-red-50/30 opacity-75'
+                      : 'border-gray-100 bg-white'
                   }`}
                 >
+                  {/* Индикатор забронированного товара */}
+                  {isReserved && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-1 rounded-lg shadow-sm flex items-center gap-1">
+                        🔒 Забронировано
+                      </span>
+                    </div>
+                  )}
+                  {/* ОТОБРАЖЕНИЕ ДИСТАНЦИИ */}
+                  {distString && (
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="text-[10px] font-bold bg-white/90 backdrop-blur text-gray-700 px-2 py-1 rounded-lg shadow-sm flex items-center gap-1">
+                        <MapPin size={12} className="text-emerald-600" />
+                        {distString}
+                      </span>
+                    </div>
+                  )}
+                  
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-20 w-28 overflow-hidden rounded-2xl bg-gray-100 flex items-center justify-center">
+                      <div className="h-20 w-28 overflow-hidden rounded-2xl bg-gray-100 flex items-center justify-center relative">
                         {imageUrl ? (
                           <img
                             src={imageUrl}
@@ -209,8 +281,15 @@ export const Dashboard = ({ user, setPage }) => {
                             {offer.category}
                           </span>
                           <StatusBadge status={isExpired && offer.status === 'available' ? 'expired' : offer.status} />
+                          {isReserved && (
+                            <span className="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded">
+                              Занят
+                            </span>
+                          )}
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900">{offer.title}</h3>
+                        <h3 className={`text-lg font-semibold ${isReserved ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+                          {offer.title}
+                        </h3>
                         <p className="text-sm text-gray-500">{offer.description}</p>
                       </div>
                     </div>
@@ -241,6 +320,20 @@ export const Dashboard = ({ user, setPage }) => {
                     </div>
                   </div>
 
+                  {/* Полный адрес для клиентов */}
+                  {user.role === 'client' && offer.address && (
+                    <div className="flex items-start gap-2 text-sm text-gray-600 bg-gray-50 rounded-xl p-3 border border-gray-100">
+                      <MapPin size={16} className="text-[#8B4513] shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Адрес получения</p>
+                        <p className="font-medium text-gray-800">{offer.address}</p>
+                        {restaurant && restaurant.name && (
+                          <p className="text-xs text-gray-500 mt-1">{restaurant.name}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex flex-wrap gap-2">
                     {user.role === 'client' && (
                       <>
@@ -261,8 +354,9 @@ export const Dashboard = ({ user, setPage }) => {
                             className="text-sm"
                             onClick={() => handleAction(offer, 'order')}
                             disabled={offer.status !== 'available' || isExpired}
+                            title={offer.status !== 'available' ? 'Товар уже забронирован' : isExpired ? 'Время истекло' : 'Забронировать товар'}
                           >
-                            Забронировать
+                            {offer.status === 'reserved' ? 'Забронировано' : 'Забронировать'}
                           </Button>
                         )}
                       </>

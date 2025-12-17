@@ -20,7 +20,16 @@ export const INITIAL_DATA = {
     { id: 3, email: 'admin@test.com', pass: 'admin', name: 'Админ', role: 'admin' },
   ],
   restaurants: [
-    { id: 1, userId: 2, name: 'Кафе "Уют"', address: 'Абая 10', city: 'Алматы', region: 'г. Алматы', phone: '+7 777 123 4567' },
+    { 
+      id: 1, 
+      userId: 2, 
+      name: 'Кафе "Уют"', 
+      address: 'Абая 10', 
+      city: 'Алматы', 
+      region: 'г. Алматы', 
+      phone: '+7 777 123 4567',
+      coords: { lat: 43.2220, lng: 76.8512 } // Координаты Алматы
+    },
   ],
   foodOffers: [
     { 
@@ -33,7 +42,8 @@ export const INITIAL_DATA = {
       pickupTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
       status: 'available', 
       description: 'Свежая пицца, осталось 3 порции.',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      coords: { lat: 43.2220, lng: 76.8512 } // Координаты ресторана
     },
   ],
   orders: [],

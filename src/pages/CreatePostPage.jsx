@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Sparkles, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Button } from '../components/Button';
+import { MapPicker } from '../components/MapPicker';
 import { api } from '../api/api';
 import { CATEGORIES } from '../utils/constants';
 
@@ -10,6 +11,7 @@ export const CreatePostPage = ({ user, onBack }) => {
   const [title, setTitle] = useState('');
   const [generatedImageUrl, setGeneratedImageUrl] = useState('');
   const [uploadedImageUrl, setUploadedImageUrl] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const imageInputRef = useRef(null);
   const previewImageUrl = uploadedImageUrl || generatedImageUrl;
 
@@ -30,7 +32,9 @@ export const CreatePostPage = ({ user, onBack }) => {
       newPrice,
       pickupTime: new Date(pickupTime).toISOString(),
       description,
-      imageUrl: previewImageUrl || null
+      imageUrl: previewImageUrl || null,
+      coords: selectedLocation?.coords || null,
+      address: selectedLocation?.address || null
     };
 
     await api.createFoodOffer(offerData, user.id);
@@ -224,6 +228,14 @@ export const CreatePostPage = ({ user, onBack }) => {
             required 
             min={getMinDateTime()}
             className="w-full border p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <MapPicker 
+            onLocationSelect={setSelectedLocation}
+            initialCoords={selectedLocation?.coords}
+            initialAddress={selectedLocation?.address}
           />
         </div>
 

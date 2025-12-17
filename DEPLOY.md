@@ -186,3 +186,5 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 Для быстрого старта используйте **Vercel** - это самый простой и быстрый способ задеплоить проект.
 
+
+
